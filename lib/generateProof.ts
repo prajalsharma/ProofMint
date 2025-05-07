@@ -46,10 +46,12 @@ export const JWTCircuitHelper = {
 
     const inputs = {
       partial_data: {
-        storage: padToLength((jwtInputs.partial_data?.storage ?? []), 1024),
+        storage: padToLength(jwtInputs.partial_data?.storage ?? [], 1024),
         len: jwtInputs.partial_data?.len ?? 0,
       },
-      partial_hash: (jwtInputs.partial_hash ?? []).map((x) => BigInt(x).toString()),
+      partial_hash: (jwtInputs.partial_hash ?? []).map((x) =>
+        BigInt(x).toString()
+      ),
       full_data_length: BigInt(jwtInputs.full_data_length ?? 0).toString(),
       base64_decode_offset: BigInt(jwtInputs.base64_decode_offset).toString(),
       jwt_pubkey_modulus_limbs: jwtInputs.pubkey_modulus_limbs.map((x) =>
@@ -86,6 +88,74 @@ export const JWTCircuitHelper = {
 
     return proof;
   },
+
+  verifyProof: async (
+    proof: Uint8Array,
+    {
+      domain,
+      jwtPubKey,
+    }: {
+      domain: string;
+      jwtPubKey: bigint;
+    }
+  ) => {
+    if (!domain || !jwtPubKey) {
+      throw new Error(
+        "[JWT Circuit] Proof verification failed: invalid public inputs"
+      );
+    }
+
+    const { BarretenbergVerifier } = await initVerifier();
+
+    const vkey = await import(`../public/circuit/jwt/circuit-vkey.json`);
+
+    // Public Inputs = pubkey_limbs(18) + domain(64) + ephemeral_pubkey(1) + ephemeral_pubkey_expiry(1) = 84
+    const publicInputs = [];
+
+    // Push modulus limbs as 64 char hex strings (18 Fields)
+    const modulusLimbs = splitBigIntToLimbs(jwtPubKey, 120, 18);
+    publicInputs.push(
+      ...modulusLimbs.map((s) => "0x" + s.toString(16).padStart(64, "0"))
+    );
+
+    // Push domain + domain length (BoundedVec of 64 bytes)
+    const domainUint8Array = new Uint8Array(64);
+    domainUint8Array.set(Uint8Array.from(new TextEncoder().encode(domain)));
+    publicInputs.push(
+      ...Array.from(domainUint8Array).map(
+        (s) => "0x" + s.toString(16).padStart(64, "0")
+      )
+    );
+    publicInputs.push("0x" + domain.length.toString(16).padStart(64, "0"));
+
+    // Push ephemeral pubkey (1 Field)
+    // publicInputs.push(
+    //   "0x" + (ephemeralPubkey >> 3n).toString(16).padStart(64, "0")
+    // );
+
+    // // Push ephemeral pubkey expiry (1 Field)
+    // publicInputs.push(
+    //   "0x" +
+    //     Math.floor(ephemeralPubkeyExpiry.getTime() / 1000)
+    //       .toString(16)
+    //       .padStart(64, "0")
+    // );
+
+    const proofData = {
+      proof: proof,
+      publicInputs,
+    };
+
+    const verifier = new BarretenbergVerifier({
+      crsPath: process.env.TEMP_DIR,
+    });
+    const result = await verifier.verifyUltraHonkProof(
+      proofData,
+      Uint8Array.from(vkey)
+    );
+
+    return result;
+  },
 };
 
 let proverPromise: Promise<{
@@ -107,4 +177,37 @@ async function initProver() {
     })();
   }
   return proverPromise;
+}
+
+let verifierPromise: Promise<{
+  BarretenbergVerifier: typeof BarretenbergVerifier;
+}> | null = null;
+
+async function initVerifier() {
+  if (!verifierPromise) {
+    verifierPromise = (async () => {
+      const { BarretenbergVerifier } = await import("@aztec/bb.js");
+      return { BarretenbergVerifier };
+    })();
+  }
+  return verifierPromise;
+}
+
+function splitBigIntToLimbs(
+  bigInt: bigint,
+  byteLength: number,
+  numLimbs: number
+): bigint[] {
+  const chunks: bigint[] = [];
+  const mask = (1n << BigInt(byteLength)) - 1n;
+
+  for (let i = 0; i < numLimbs; i++) {
+    const iBig = BigInt(i);
+    const shift = iBig * BigInt(byteLength);
+    const chunk = (bigInt / (1n << shift)) & mask;
+    
+    chunks.push(chunk);
+  }
+
+  return chunks;
 }
