@@ -19,6 +19,7 @@
     "clsx": "^2.1.1",
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.507.0",
+    "msgpackr": "^1.11.2",
     "next": "15.3.1",
     "next-auth": "^4.24.11",
     "noir-jwt": "^0.4.5",

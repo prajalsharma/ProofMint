@@ -1,6 +1,6 @@
 use jwt::JWT;
 
-global MAX_PARTIAL_DATA_LENGTH: u32 = 640;
+global MAX_PARTIAL_DATA_LENGTH: u32 = 1024;
 global MAX_DOMAIN_LENGTH: u32 = 64;
 global MAX_EMAIL_LENGTH: u32 = 128;
 
@@ -29,6 +29,7 @@ fn main(
 
     let email: BoundedVec<u8, MAX_EMAIL_LENGTH> = jwt.get_claim_string("email".as_bytes());
 
+    // Safety: get_domain_start_index_in_email does not access out-of-bounds memory and returns a valid index or 0.
     let domain_start_index = unsafe { get_domain_start_index_in_email(email) };
 
     assert(email.storage()[domain_start_index - 1] == 64, "char before domain is not '@'");
