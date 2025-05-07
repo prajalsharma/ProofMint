@@ -9,6 +9,11 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@aztec/bb.js": "^0.86.0",
+    "@noble/ed25519": "^2.2.3",
+    "@noble/hashes": "^1.8.0",
+    "@noir-lang/barretenberg": "^2.22.0",
+    "@noir-lang/noir_js": "^1.0.0-beta.3",
     "@radix-ui/react-slot": "^1.2.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -16,6 +21,7 @@
     "lucide-react": "^0.507.0",
     "next": "15.3.1",
     "next-auth": "^4.24.11",
+    "noir-jwt": "^0.4.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tailwind-merge": "^3.2.0"
