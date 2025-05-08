@@ -23,15 +23,15 @@ echo "✅ Compilation successful: $CIRCUIT_JSON"
 echo "📏 Gate count:"
 bb gates -b "$CIRCUIT_JSON" | jq '.functions[0].circuit_size'
 
-# OUTPUT_DIR="../../public/circuit/jwt"
-# mkdir -p "$OUTPUT_DIR"
+OUTPUT_DIR="../../public/circuit/feedback_circuit"
+mkdir -p "$OUTPUT_DIR"
 
-# echo "📁 Copying circuit.json to $OUTPUT_DIR..."
-# cp "$CIRCUIT_JSON" "$OUTPUT_DIR/circuit.json"
+echo "📁 Copying feedback_circuit.json to $OUTPUT_DIR..."
+cp "$CIRCUIT_JSON" "$OUTPUT_DIR/feedback_circuit.json"
 
-# echo "🧷 Generating vkey..."
-# bb write_vk -b "$CIRCUIT_JSON" -o ./target
+echo "🧷 Generating vkey..."
+bb write_vk -b "$CIRCUIT_JSON" -o ./target
 
-# echo "🧷 Exporting vkey to circuit-vkey.json..."
-# node -e "const fs = require('fs'); fs.writeFileSync('$OUTPUT_DIR/circuit-vkey.json', JSON.stringify(Array.from(Uint8Array.from(fs.readFileSync('./target/vk')))));"
+echo "🧷 Exporting vkey to circuit-vkey.json..."
+node -e "const fs = require('fs'); fs.writeFileSync('$OUTPUT_DIR/feedback_circuit-vkey.json', JSON.stringify(Array.from(Uint8Array.from(fs.readFileSync('./target/vk')))));"
 
