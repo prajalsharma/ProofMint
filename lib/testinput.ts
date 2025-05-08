@@ -47,7 +47,7 @@ const handleGenerateProof = async () => {
     }
   );
 
-  console.log("Proof verification result:", proofVerificationResult);
+  console.log("Proof verification result:", !proofVerificationResult);
 };
 
 async function fetchGooglePublicKey(keyId: string) {
