@@ -5,7 +5,7 @@ import Link from "next/link";
 
 const Header = () => {
   return (
-    <header className="w-full max-w-4xl flex justify-between items-center mb-8">
+    <header className="w-full lg:w-[75%] mx-auto flex justify-between items-center mb-8">
       <div className="flex items-center gap-2 text-xl font-semibold">
         <Link href="/" className="flex items-center gap-2 uppercase text-2xl">
           <Image src="/logo.svg" alt="Logo" width={75} height={75} className="" />
