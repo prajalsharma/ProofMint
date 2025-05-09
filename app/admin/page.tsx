@@ -26,12 +26,17 @@ type Field = {
 export default function AdminPage() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [allowedDomains, setAllowedDomains] = useState<string[]>([""]);
   const [fields, setFields] = useState<Field[]>([
     { id: crypto.randomUUID(), label: "", type: "text", required: false },
   ]);
 
   const addField = () => {
     setFields([...fields, { id: crypto.randomUUID(), label: "", type: "text", required: false }]);
+  };
+
+  const addDomain = () => {
+    setAllowedDomains([...allowedDomains, ""]);
   };
 
   const updateField = (index: number, key: keyof Field, value: string | boolean) => {
@@ -48,8 +53,24 @@ export default function AdminPage() {
     setFields(newFields);
   };
 
+  const updateDomain = (index: number, value: string) => {
+    const newDomains = [...allowedDomains];
+    newDomains[index] = value;
+    setAllowedDomains(newDomains);
+  };
+
+  const removeDomain = (index: number) => {
+    setAllowedDomains(allowedDomains.filter((_, i) => i !== index));
+  };
+
   const handlePublish = () => {
-    const form = { id: crypto.randomUUID(), title, description, fields };
+    const form = { 
+      id: crypto.randomUUID(), 
+      title, 
+      description, 
+      fields,
+      allowedDomains: allowedDomains.filter(domain => domain.trim() !== "")
+    };
     // temp
     const existingForm = JSON.parse(localStorage.getItem("forms") || "[]");
     localStorage.setItem("forms", JSON.stringify([...existingForm, form]));
@@ -83,6 +104,35 @@ export default function AdminPage() {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
               />
+            </div>
+            <div>
+              <Label className="text-brownish text-lg">Allowed Email Domains</Label>
+              <div className="space-y-2">
+                {allowedDomains.map((domain, index) => (
+                  <div key={index} className="flex gap-2 items-center">
+                    <Input
+                      className="text-cream"
+                      placeholder="example.com"
+                      value={domain}
+                      onChange={(e) => updateDomain(index, e.target.value)}
+                    />
+                    {allowedDomains.length > 1 && (
+                      <button
+                        onClick={() => removeDomain(index)}
+                        className="text-cream transition cursor-pointer"
+                        aria-label="Remove domain">
+                        <Trash2 className="size-4.5" />
+                      </button>
+                    )}
+                  </div>
+                ))}
+                <Button
+                  onClick={addDomain}
+                  className="bg-cream text-darkblue border border-cream hover:bg-cream/70"
+                >
+                  <Plus className="w-4 h-4 mr-2" /> Add Domain
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>

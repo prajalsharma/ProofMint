@@ -14,9 +14,9 @@ const Header = () => {
           </span>
         </Link>
       </div>
-      <Button className="text-cream text-lg border-1 border-cream bg-transparent hover:bg-cream hover:text-darkblue transition-colors px-10 py-5">
+      {/* <Button className="text-cream text-lg border-1 border-cream bg-transparent hover:bg-cream hover:text-darkblue transition-colors px-10 py-5">
         <Wallet className="mr-1" /> <span className="hidden md:block">Connect Wallet</span>
-      </Button>
+      </Button> */}
     </header>
   );
 };

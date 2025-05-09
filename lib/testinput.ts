@@ -36,6 +36,10 @@ const handleGenerateProof = async () => {
 
   console.log("Proof generated:", proof);
 
+  console.log("idToken", idToken);
+      console.log("googleJWTPubkey", googleJWTPubkey);
+      console.log("domain", domain);
+
   const { modulus } = jwkToRsaParams(googleJWTPubkey);
 
   // Optionally verify the proof (if necessary)

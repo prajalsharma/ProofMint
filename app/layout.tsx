@@ -30,9 +30,9 @@ export default function RootLayout({
       >
         <Header />
         <SessionWrapper>{children}</SessionWrapper> {/* ✅ wrapped here */}
-        <footer className="mt-3 text-sm text-gray-500">
+        {/* <footer className="mt-3 text-sm text-gray-500">
           Submission for NoirHack
-        </footer>
+        </footer> */}
       </body>
     </html>
   );
