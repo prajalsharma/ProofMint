@@ -5,9 +5,6 @@ import type { UltraHonkBackend, BarretenbergVerifier } from "@aztec/bb.js";
 
 const MAX_DOMAIN_LENGTH = 64;
 
-/**
- * Safely imports modules with error handling
- */
 const safeImport = async (modulePath) => {
   try {
     return await import(modulePath);
@@ -17,16 +14,12 @@ const safeImport = async (modulePath) => {
   }
 };
 
-/**
- * Initializes the prover dependencies
- */
+
 async function initProver() {
   try {
-    // Import modules one by one with proper error handling
     const noirModule = await safeImport("@noir-lang/noir_js");
     const aztecModule = await safeImport("@aztec/bb.js");
     
-    // Verify that required exports exist
     if (!noirModule.Noir) {
       throw new Error("Noir class not found in @noir-lang/noir_js");
     }
@@ -45,9 +38,7 @@ async function initProver() {
   }
 }
 
-/**
- * Initializes the verifier dependencies
- */
+
 async function initVerifier() {
   try {
     const aztecModule = await safeImport("@aztec/bb.js");
@@ -65,9 +56,7 @@ async function initVerifier() {
   }
 }
 
-/**
- * Splits a bigint into limbs of specified byte length
- */
+
 function splitBigIntToLimbs(
   bigInt: bigint,
   byteLength: number,
@@ -85,9 +74,7 @@ function splitBigIntToLimbs(
   return chunks;
 }
 
-/**
- * Helper for working with JWT circuits
- */
+
 export const JWTCircuitHelper = {
   version: "0.3.1",
   
@@ -100,7 +87,6 @@ export const JWTCircuitHelper = {
     jwtPubkey: JsonWebKey;
     domain: string;
   }) => {
-    // Input validation
     if (!idToken || !jwtPubkey) {
       throw new Error(
         "[JWT Circuit] Proof generation failed: idToken and jwtPubkey are required"
@@ -222,7 +208,6 @@ export const JWTCircuitHelper = {
         ...modulusLimbs.map((s) => "0x" + s.toString(16).padStart(64, "0"))
       );
 
-      // Push domain + domain length (BoundedVec of 64 bytes)
       const domainUint8Array = new Uint8Array(64);
       domainUint8Array.set(Uint8Array.from(new TextEncoder().encode(domain)));
       publicInputs.push(
@@ -237,12 +222,10 @@ export const JWTCircuitHelper = {
         publicInputs,
       };
 
-      // Create verifier instance
       const verifier = new BarretenbergVerifier({
         crsPath: process.env.TEMP_DIR,
       });
       
-      // Verify proof
       const result = await verifier.verifyUltraHonkProof(
         proofData,
         Uint8Array.from(vkey)

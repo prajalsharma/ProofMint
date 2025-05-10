@@ -36,9 +36,9 @@ const handleGenerateProof = async () => {
 
   console.log("Proof generated:", proof);
 
-  console.log("idToken", idToken);
-      console.log("googleJWTPubkey", googleJWTPubkey);
-      console.log("domain", domain);
+  console.log("idToken:", idToken.slice(0, 10) + "..." + idToken.slice(-10));
+  console.log("googleJWTPubkey", googleJWTPubkey);
+  console.log("domain", domain);
 
   const { modulus } = jwkToRsaParams(googleJWTPubkey);
 
@@ -71,24 +71,28 @@ async function fetchGooglePublicKey(keyId: string) {
   return key;
 }
 
-
 handleGenerateProof();
 
-function jwkToRsaParams(jwk: JsonWebKey): { modulus: bigint; exponent: bigint } {
+function jwkToRsaParams(jwk: JsonWebKey): {
+  modulus: bigint;
+  exponent: bigint;
+} {
   if (!jwk.n || !jwk.e) {
     throw new Error("Invalid JWK: missing modulus or exponent");
   }
 
   function base64UrlToBigInt(base64url: string): bigint {
-    const base64 = base64url.replace(/-/g, '+').replace(/_/g, '/');
+    const base64 = base64url.replace(/-/g, "+").replace(/_/g, "/");
     const binary = atob(base64);
     const bytes = new Uint8Array(binary.length);
     for (let i = 0; i < binary.length; i++) {
       bytes[i] = binary.charCodeAt(i);
     }
-    let hex = '0x' + Array.from(bytes)
-      .map((b) => b.toString(16).padStart(2, '0'))
-      .join('');
+    let hex =
+      "0x" +
+      Array.from(bytes)
+        .map((b) => b.toString(16).padStart(2, "0"))
+        .join("");
     return BigInt(hex);
   }
 

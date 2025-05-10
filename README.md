@@ -5,6 +5,8 @@ A private, anonymous feedback platform that proves you belong without revealing 
 
 This app lets people give honest, anonymous feedback in a group (like a company or school), while still proving they have the right to be there.
 
+Video Demo of our project [ProofMint](https://www.youtube.com/watch?v=t6UT7AVIm9k)
+
 We use:
 
     🔐 Google login – to check if you're part of a domain (like @delhitechinicalcampus.ac.in)
@@ -32,26 +34,7 @@ We use:
     Post feedback
     You submit feedback, and we verify it came from a real, authorized user—without ever knowing who.
 
-## 🛠 Tech Stack
-
-| Tech     | Purpose                               |
-|----------|---------------------------------------|
-| Next.js  | Frontend and app framework            |
-| Noir     | zk circuit language                   |
-| zkJWT    | Verifies Google ID token (JWT) in zk  |
-
-## 🚀 Getting Started
-
-```
-git clone https://github.com/prajalsharma/ProofMint
-
-cd zk-feedback-dapp
-npm install
-npm run dev
-```
-
-
-## 📦 Circuit Setup
+## 📦 Circuit Setup, Usage and Output
 
 You’ll need to build the Noir circuit:
 
@@ -87,4 +70,22 @@ googleJWTPubkey {
 domain delhitechnicalcampus.ac.in
 Proof verification result: true
 
+```
+
+## 🛠 Tech Stack
+
+| Tech     | Purpose                               |
+|----------|---------------------------------------|
+| Next.js  | Frontend and app framework            |
+| Noir     | zk circuit language                   |
+| zkJWT    | Verifies Google ID token (JWT) in zk  |
+
+## 🚀 Getting Started
+
+```
+git clone https://github.com/prajalsharma/ProofMint
+
+cd zk-feedback-dapp
+npm install
+npm run dev
 ```
